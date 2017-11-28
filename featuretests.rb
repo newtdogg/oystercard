@@ -1,4 +1,4 @@
 require './lib/oystercard.rb'
 card = OysterCard.new
-
-p card.touch_in
+card.top_up(10)
+p card.touch_in(aldgate)
