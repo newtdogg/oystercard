@@ -31,18 +31,34 @@ describe OysterCard do
     describe '#touch_in' do
       it 'allows a customer to touch in to start journey' do
         expect(card).to respond_to(:touch_in)
+        card.top_up(5)
         card.touch_in
         expect(card.in_journey?).to be(true)
+      end
+
+      it 'prevents a customer from starting a journey before ending their original journey' do
+        card.top_up(5)
+        card.touch_in
+        expect { card.touch_in }.to raise_error 'already in journey!'
+      end
+
+      it 'prevents a customer from touching in if their card is below the minimum balance' do
+        expect { card.touch_in }.to raise_error 'card balance under minimum of £1'
       end
     end
 
    describe '#touch_out' do
       it 'allows a customer to touch out and complete a journey' do
         expect(card).to respond_to(:touch_out)
+        card.top_up(5)
+        card.touch_in
         card.touch_out
         expect(card.in_journey?).to be(false)
+      end
 
-     end
+      it 'prevents a customer from touching when they havent started a journey' do
+        expect { card.touch_out }.to raise_error 'journey not started, cant touch out!'
+      end
     end
   end
 end
